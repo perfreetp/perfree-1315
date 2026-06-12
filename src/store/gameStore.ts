@@ -4,6 +4,7 @@ import type { GameState, KeyChoice, DiaryEntry } from '@/types'
 import { advanceTime as engineAdvanceTime } from '@/engine/timeSystem'
 import { changeAffinity as changeAffinityValue } from '@/engine/affinitySystem'
 import { useMetaStore } from './metaStore'
+import { chapters } from '@/data/chapters'
 
 const initialGameState: GameState = {
   playerName: '',
@@ -34,6 +35,7 @@ interface GameStoreActions {
   startGame: (playerName: string) => void
   loadGame: (state: GameState) => void
   setLocation: (locationId: string) => void
+  setChapter: (chapterId: string) => void
   setScene: (sceneId: string) => void
   advanceTime: () => void
   addItem: (itemId: string) => void
@@ -64,20 +66,44 @@ export const useGameStore = create<GameStore>()(
     (set, get) => ({
       ...initialGameState,
 
-      startGame: (playerName) =>
+      startGame: (playerName) => {
+        const firstChapter = chapters[0]
+        const firstScene = firstChapter.scenes[0]
         set({
           ...initialGameState,
           playerName,
-          gamePhase: 'playing'
-        }),
+          gamePhase: 'playing',
+          currentChapter: firstChapter.id,
+          currentScene: firstScene.id,
+          currentLocation: firstScene.locationId
+        })
+      },
 
       loadGame: (state) => set(state),
 
       setLocation: (locationId) =>
         set({ currentLocation: locationId }),
 
-      setScene: (sceneId) =>
-        set({ currentScene: sceneId }),
+      setChapter: (chapterId) =>
+        set({ currentChapter: chapterId }),
+
+      setScene: (sceneId) => {
+        let chapterId: string | undefined
+        for (const chapter of chapters) {
+          for (const scene of chapter.scenes) {
+            if (scene.id === sceneId) {
+              chapterId = chapter.id
+              break
+            }
+          }
+          if (chapterId) break
+        }
+        if (chapterId) {
+          set({ currentScene: sceneId, currentChapter: chapterId })
+        } else {
+          set({ currentScene: sceneId })
+        }
+      },
 
       advanceTime: () =>
         set((state) => engineAdvanceTime(state)),

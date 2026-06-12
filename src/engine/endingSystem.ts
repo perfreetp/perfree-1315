@@ -53,8 +53,8 @@ function evaluateEndingCondition(
         state.clues.includes('manuscript-disappearance-truth') &&
         state.clues.includes('writer-hermit-mystery') &&
         state.inventory.includes('author-legacy') &&
-        (state.affinity['lin-xueqing'] ?? 0) >= 50 &&
-        (state.affinity['he-zhenbang'] ?? 0) >= 50 &&
+        (state.affinity['lin-xueqing'] ?? 0) >= 30 &&
+        (state.affinity['he-zhenbang'] ?? 0) >= 30 &&
         state.keyChoices.some(kc => kc.choiceId === 'ch3-s9-trust-writer')
       )
 
@@ -69,7 +69,7 @@ function evaluateEndingCondition(
         return sum + (state.affinity[id] || 0)
       }, 0)
       return (
-        harborAffinity >= 60 &&
+        harborAffinity >= 40 &&
         state.clues.includes('dock-knot-mark') &&
         state.inventory.includes('logbook-fragment')
       )

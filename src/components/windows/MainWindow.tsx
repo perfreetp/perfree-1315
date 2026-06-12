@@ -189,18 +189,18 @@ export default function MainWindow() {
 
     addToTextHistory(`> ${choice.text}`)
 
-    state.setScene(nextScene)
-
     if (choice.isKey) {
       state.makeKeyChoice({
-        sceneId: currentScene,
+        sceneId: state.currentScene,
         choiceId: choice.id,
         choiceText: choice.text,
-        chapter: currentChapter
+        chapter: state.currentChapter
       })
     }
 
-    if (currentChapter === 'chapter-3' && scene?.id.endsWith('-9')) {
+    state.setScene(nextScene)
+
+    if (choice.nextScene === 'ending-determination') {
       const ending = determineEnding(useGameStore.getState(), endings)
       if (ending) {
         state.setGamePhase('ending')

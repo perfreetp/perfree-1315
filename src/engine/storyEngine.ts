@@ -113,6 +113,16 @@ export function makeChoice(choice: SceneChoice, state: GameState): { nextState: 
 }
 
 export function checkCondition(condition: string, state: GameState): boolean {
+  if (condition.includes('&&')) {
+    return condition.split('&&').every(sub => checkSingleCondition(sub.trim(), state))
+  }
+  if (condition.includes('||')) {
+    return condition.split('||').some(sub => checkSingleCondition(sub.trim(), state))
+  }
+  return checkSingleCondition(condition, state)
+}
+
+function checkSingleCondition(condition: string, state: GameState): boolean {
   const [type, ...rest] = condition.split(':')
   const target = rest.join(':')
 
@@ -136,6 +146,12 @@ export function checkCondition(condition: string, state: GameState): boolean {
 
     case 'triggeredEvent':
       return state.triggeredEvents.includes(target)
+
+    case 'dayGte':
+      return state.day >= parseInt(target, 10)
+
+    case 'dayLte':
+      return state.day <= parseInt(target, 10)
 
     default:
       return false

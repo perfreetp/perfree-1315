@@ -91,7 +91,10 @@ export const items: ItemData[] = [
     name: '灯塔密码',
     description: '破解后的灯塔信号密码，三短一长的闪光意味着"危险已过，可入灯塔"。',
     icon: '🔐',
-    rarity: 'rare'
+    rarity: 'rare',
+    combinableWith: 'secret-letter',
+    combineResult: 'author-legacy',
+    combineDescription: '密函中的隐语与灯塔密码交叉印证，作家遗稿的藏匿之处终于大白。'
   },
   {
     id: 'printing-plate',
