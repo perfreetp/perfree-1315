@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware'
 import type { GameState, KeyChoice, DiaryEntry } from '@/types'
 import { advanceTime as engineAdvanceTime } from '@/engine/timeSystem'
 import { changeAffinity as changeAffinityValue } from '@/engine/affinitySystem'
+import { useMetaStore } from './metaStore'
 
 const initialGameState: GameState = {
   playerName: '',
@@ -48,6 +49,8 @@ interface GameStoreActions {
   unlockAchievement: (achievementId: string) => void
   setGamePhase: (phase: GameState['gamePhase']) => void
   setEndingType: (endingType: string) => void
+  unlockEndingInMeta: (endingId: string) => void
+  syncAchievementsToMeta: () => void
   updateClueBoard: (clueId: string, x: number, y: number, connections: string[]) => void
   addClueBoardConnection: (fromId: string, toId: string) => void
   retryFromScene: (sceneId: string) => void
@@ -58,7 +61,7 @@ type GameStore = GameState & GameStoreActions
 
 export const useGameStore = create<GameStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialGameState,
 
       startGame: (playerName) =>
@@ -149,6 +152,17 @@ export const useGameStore = create<GameStore>()(
 
       setEndingType: (endingType) =>
         set({ endingType }),
+
+      unlockEndingInMeta: (endingId) => {
+        useMetaStore.getState().unlockEnding(endingId)
+      },
+
+      syncAchievementsToMeta: () => {
+        const state = get()
+        state.unlockedAchievements.forEach((achievementId) => {
+          useMetaStore.getState().unlockAchievementGlobal(achievementId)
+        })
+      },
 
       updateClueBoard: (clueId, x, y, connections) =>
         set((state) => ({

@@ -9,9 +9,9 @@ interface CombineRecipe {
 
 const COMBINE_RECIPES: CombineRecipe[] = [
   { item1: 'manuscript-fragment-a', item2: 'manuscript-fragment-b', result: 'complete-manuscript' },
-  { item1: 'sea-log-fragment', item2: 'cipher-manual', result: 'lighthouse-code' },
-  { item1: 'complete-manuscript', item2: 'printing-template', result: 'secret-letter' },
-  { item1: 'secret-letter', item2: 'lighthouse-code', result: 'author-final-draft' }
+  { item1: 'logbook-fragment', item2: 'codebook', result: 'lighthouse-code' },
+  { item1: 'complete-manuscript', item2: 'printing-plate', result: 'secret-letter' },
+  { item1: 'secret-letter', item2: 'lighthouse-code', result: 'author-legacy' }
 ]
 
 const PUZZLE_HINTS: Record<string, Record<AffinityLevel, string>> = {

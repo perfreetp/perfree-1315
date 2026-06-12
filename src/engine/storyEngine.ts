@@ -2,8 +2,30 @@ import type { GameState, SceneData, SceneChoice, SceneEffect, DiaryEntry, TimeOf
 import { TIME_SLOTS, TIME_SLOT_NAMES } from '@/types'
 import { changeAffinity as changeAffinityValue } from './affinitySystem'
 import { advanceTime } from './timeSystem'
+import { chapters } from '@/data/chapters'
 
 export function resolveScene(sceneId: string, gameState: GameState): SceneData | null {
+  for (const chapter of chapters) {
+    for (const scene of chapter.scenes) {
+      if (scene.id === sceneId) {
+        if (scene.condition && !checkCondition(scene.condition, gameState)) {
+          continue
+        }
+        return scene
+      }
+    }
+  }
+  return null
+}
+
+export function getSceneChapter(sceneId: string): string | null {
+  for (const chapter of chapters) {
+    for (const scene of chapter.scenes) {
+      if (scene.id === sceneId) {
+        return chapter.id
+      }
+    }
+  }
   return null
 }
 

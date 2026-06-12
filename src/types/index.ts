@@ -67,6 +67,7 @@ export interface SceneChoice {
   isKey?: boolean
   nextScene: string
   effects?: SceneEffect[]
+  condition?: string
 }
 
 export interface SceneEffect {

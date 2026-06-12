@@ -7,21 +7,30 @@ interface EndingEvaluation {
 }
 
 const ENDING_PRIORITY: Record<string, number> = {
-  hidden: 5,
-  true: 4,
+  'hidden-ending': 5,
+  'true-ending': 4,
   'normal-a': 3,
   'normal-b': 2,
-  bad: 1
+  'bad-ending': 1
 }
 
 const KEY_CLUES = [
-  'complete-manuscript',
-  'lighthouse-code',
-  'secret-letter',
-  'author-final-draft'
+  'manuscript-disappearance-truth',
+  'writer-hermit-mystery',
+  'secret-letter-content',
+  'lighthouse-code-interpretation',
+  'early-manuscript',
+  'anonymous-letter-content'
 ]
 
-const HARBOR_CHARACTER_IDS = ['harbor-master', 'fisherman', 'innkeeper']
+const KEY_ITEMS = [
+  'author-legacy',
+  'secret-letter',
+  'lighthouse-code',
+  'complete-manuscript'
+]
+
+const HARBOR_CHARACTER_IDS = ['zhao-henian', 'lin-xueqing']
 
 function evaluateEndingCondition(
   endingId: string,
@@ -29,34 +38,48 @@ function evaluateEndingCondition(
 ): boolean {
   const totalAffinity = getTotalAffinity(state.affinity)
   const collectedKeyClues = KEY_CLUES.filter(clue => state.clues.includes(clue))
-  const correctKeyChoices = state.keyChoices.filter(kc => !kc.consequence || kc.consequence === 'positive')
+  const collectedKeyItems = KEY_ITEMS.filter(item => state.inventory.includes(item))
 
   switch (endingId) {
-    case 'hidden':
-      return state.triggeredEvents.includes('hidden-event-lighthouse-midnight')
-
-    case 'true':
+    case 'hidden-ending':
       return (
-        collectedKeyClues.length === KEY_CLUES.length &&
-        totalAffinity >= 200 &&
-        correctKeyChoices.length >= 3
+        state.inventory.includes('author-legacy') &&
+        state.triggeredEvents.includes('lighthouse-night-event') &&
+        state.keyChoices.some(kc => kc.choiceId === 'ch2-s10-enter-lighthouse')
+      )
+
+    case 'true-ending':
+      return (
+        state.clues.includes('manuscript-disappearance-truth') &&
+        state.clues.includes('writer-hermit-mystery') &&
+        state.inventory.includes('author-legacy') &&
+        (state.affinity['lin-xueqing'] ?? 0) >= 50 &&
+        (state.affinity['he-zhenbang'] ?? 0) >= 50 &&
+        state.keyChoices.some(kc => kc.choiceId === 'ch3-s9-trust-writer')
       )
 
     case 'normal-a':
       return (
-        collectedKeyClues.length >= 3 &&
-        totalAffinity >= 120
+        collectedKeyClues.length >= 4 &&
+        state.inventory.includes('complete-manuscript')
       )
 
     case 'normal-b': {
       const harborAffinity = HARBOR_CHARACTER_IDS.reduce((sum, id) => {
         return sum + (state.affinity[id] || 0)
       }, 0)
-      return harborAffinity >= 150
+      return (
+        harborAffinity >= 60 &&
+        state.clues.includes('dock-knot-mark') &&
+        state.inventory.includes('logbook-fragment')
+      )
     }
 
-    case 'bad':
-      return collectedKeyClues.length < 2
+    case 'bad-ending':
+      return (
+        collectedKeyClues.length < 3 ||
+        !state.inventory.includes('complete-manuscript')
+      )
 
     default:
       return false
