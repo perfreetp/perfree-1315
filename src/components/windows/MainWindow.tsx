@@ -61,7 +61,8 @@ export default function MainWindow() {
     clearTextHistory,
     isTyping,
     setTyping,
-    toggleSaveLoad
+    toggleSaveLoad,
+    setCurrentDialogueId
   } = uiState
 
   const [showHistory, setShowHistory] = useState(false)
@@ -104,6 +105,11 @@ export default function MainWindow() {
       scene.text.forEach(para => {
         addToTextHistory(para)
       })
+
+      if (scene.dialogue) {
+        setCurrentDialogueId(scene.dialogue)
+        openWindow('dialogue')
+      }
     }
   }, [currentScene])
 

@@ -12,6 +12,7 @@ interface UIState {
   audioType: AudioType
   showSaveLoad: boolean
   showSettings: boolean
+  currentDialogueId: string
 }
 
 interface UIActions {
@@ -26,6 +27,7 @@ interface UIActions {
   setAudioType: (type: AudioType) => void
   toggleSaveLoad: () => void
   toggleSettings: () => void
+  setCurrentDialogueId: (dialogueId: string) => void
 }
 
 type UIStore = UIState & UIActions
@@ -40,6 +42,7 @@ export const useUIStore = create<UIStore>()((set) => ({
   audioType: 'harbor',
   showSaveLoad: false,
   showSettings: false,
+  currentDialogueId: '',
 
   openWindow: (windowId) =>
     set((state) => {
@@ -92,5 +95,8 @@ export const useUIStore = create<UIStore>()((set) => ({
     set((state) => ({ showSaveLoad: !state.showSaveLoad })),
 
   toggleSettings: () =>
-    set((state) => ({ showSettings: !state.showSettings }))
+    set((state) => ({ showSettings: !state.showSettings })),
+
+  setCurrentDialogueId: (dialogueId) =>
+    set({ currentDialogueId: dialogueId })
 }))

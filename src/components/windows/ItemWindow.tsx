@@ -54,7 +54,6 @@ export default function ItemWindow() {
   const [combineMessage, setCombineMessage] = useState<string>('')
   const [isCombineAnimating, setIsCombineAnimating] = useState(false)
   const [isShaking, setIsShaking] = useState(false)
-  const [hasCombined, setHasCombined] = useState(false)
 
   const inventoryItems = inventory
     .map(id => items.find(item => item.id === id))
@@ -71,12 +70,17 @@ export default function ItemWindow() {
   const handleCombineItemClick = useCallback((itemId: string) => {
     if (combineSlot1 === itemId || combineSlot2 === itemId) return
 
+    if (combineResult) {
+      setCombineResult(null)
+      setCombineMessage('')
+    }
+
     if (!combineSlot1) {
       setCombineSlot1(itemId)
     } else if (!combineSlot2) {
       setCombineSlot2(itemId)
     }
-  }, [combineSlot1, combineSlot2])
+  }, [combineSlot1, combineSlot2, combineResult])
 
   const clearSlot1 = useCallback(() => {
     setCombineSlot1(null)
@@ -118,11 +122,6 @@ export default function ItemWindow() {
         )
         addDiaryEntry(diaryEntry)
 
-        if (!hasCombined) {
-          unlockAchievement('pages-united')
-          setHasCombined(true)
-        }
-
         const achievementId = ACHIEVEMENT_MAP[result]
         if (achievementId && !unlockedAchievements.includes(achievementId)) {
           unlockAchievement(achievementId)
@@ -131,10 +130,6 @@ export default function ItemWindow() {
         setIsCombineAnimating(false)
         setCombineSlot1(null)
         setCombineSlot2(null)
-        setTimeout(() => {
-          setCombineResult(null)
-          setCombineMessage('')
-        }, 2000)
       }, 800)
     } else {
       setIsShaking(true)
@@ -143,7 +138,7 @@ export default function ItemWindow() {
         setIsShaking(false)
       }, 500)
     }
-  }, [combineSlot1, combineSlot2, removeItem, addItem, addDiaryEntry, unlockAchievement, hasCombined, unlockedAchievements])
+  }, [combineSlot1, combineSlot2, removeItem, addItem, addDiaryEntry, unlockAchievement, unlockedAchievements])
 
   const renderItemCard = (item: ItemData, index: number, isSelectable: boolean = true, isSelected: boolean = false) => (
     <motion.div

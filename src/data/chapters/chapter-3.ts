@@ -119,7 +119,7 @@ export const chapter3: ChapterData = {
     },
     {
       id: 'ch3-s5',
-      locationId: 'city-library',
+      locationId: 'lighthouse-cliff',
       chapter: 'chapter-3',
       title: '真相碎片',
       text: [

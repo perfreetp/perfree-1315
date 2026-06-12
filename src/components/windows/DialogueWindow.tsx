@@ -26,7 +26,7 @@ export default function DialogueWindow() {
     unlockAchievement
   } = useGameStore()
 
-  const { closeWindow, focusWindow } = useUIStore()
+  const { closeWindow, focusWindow, currentDialogueId } = useUIStore()
 
   const [currentNodeId, setCurrentNodeId] = useState<string>('')
   const [dialogueHistory, setDialogueHistory] = useState<string[]>([])
@@ -56,18 +56,27 @@ export default function DialogueWindow() {
   } = useTypewriter(currentNode?.text || '', { speed: 20 })
 
   useEffect(() => {
-    if (character && character.id !== lastCharacterId) {
-      setLastCharacterId(character.id)
-      const firstAvailable = dialogue.find(d => {
-        if (!d.condition) return true
-        return checkCondition(d.condition, useGameStore.getState())
-      })
-      if (firstAvailable) {
-        setCurrentNodeId(firstAvailable.id)
+    if (character) {
+      if (currentDialogueId) {
+        const targetNode = dialogue.find(d => d.id === currentDialogueId)
+        if (targetNode && targetNode.id !== currentNodeId) {
+          setCurrentNodeId(targetNode.id)
+          setDialogueHistory([])
+          setLastCharacterId(character.id)
+        }
+      } else if (character.id !== lastCharacterId) {
+        setLastCharacterId(character.id)
+        const firstAvailable = dialogue.find(d => {
+          if (!d.condition) return true
+          return checkCondition(d.condition, useGameStore.getState())
+        })
+        if (firstAvailable) {
+          setCurrentNodeId(firstAvailable.id)
+        }
+        setDialogueHistory([])
       }
-      setDialogueHistory([])
     }
-  }, [character, lastCharacterId, dialogue])
+  }, [character, lastCharacterId, dialogue, currentDialogueId, currentNodeId])
 
   useEffect(() => {
     if (currentNode && isComplete && !dialogueHistory.includes(currentNode.text)) {
