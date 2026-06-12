@@ -131,6 +131,10 @@ export default function ItemWindow() {
         setIsCombineAnimating(false)
         setCombineSlot1(null)
         setCombineSlot2(null)
+        setTimeout(() => {
+          setCombineResult(null)
+          setCombineMessage('')
+        }, 2000)
       }, 800)
     } else {
       setIsShaking(true)

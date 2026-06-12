@@ -89,17 +89,19 @@ export const useGameStore = create<GameStore>()(
 
       setScene: (sceneId) => {
         let chapterId: string | undefined
+        let locationId: string | undefined
         for (const chapter of chapters) {
           for (const scene of chapter.scenes) {
             if (scene.id === sceneId) {
               chapterId = chapter.id
+              locationId = scene.locationId
               break
             }
           }
           if (chapterId) break
         }
-        if (chapterId) {
-          set({ currentScene: sceneId, currentChapter: chapterId })
+        if (chapterId && locationId) {
+          set({ currentScene: sceneId, currentChapter: chapterId, currentLocation: locationId })
         } else {
           set({ currentScene: sceneId })
         }
